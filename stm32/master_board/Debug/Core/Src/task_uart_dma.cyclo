@@ -1,0 +1,2 @@
+../Core/Src/task_uart_dma.c:22:6:HAL_UARTEx_RxEventCallback	3
+../Core/Src/task_uart_dma.c:31:6:task_uart	1
