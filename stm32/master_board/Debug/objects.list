@@ -1,3 +1,5 @@
+"./Core/Src/can.o"
+"./Core/Src/can_lib.o"
 "./Core/Src/dma.o"
 "./Core/Src/freertos.o"
 "./Core/Src/gpio.o"
@@ -14,6 +16,7 @@
 "./Core/Startup/startup_stm32l476rgtx.o"
 "./Drivers/BSP/STM32L4xx_Nucleo/stm32l4xx_nucleo.o"
 "./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.o"
+"./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_can.o"
 "./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.o"
 "./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.o"
 "./Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.o"

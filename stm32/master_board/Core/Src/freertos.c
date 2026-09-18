@@ -61,7 +61,7 @@ const osThreadAttr_t defaultTask_attributes = {
 osThreadId_t UartTaskHandle;
 const osThreadAttr_t UartTask_attributes = {
 		.name = "UartTask",
-		.stack_size = 128*8,
+		.stack_size = 128*16,
 		.priority = (osPriority_t) osPriorityHigh2,
 };
 //zabawa kolejjkaim
@@ -71,12 +71,19 @@ const osMessageQueueAttr_t QueueUartCan_attributes = {
     .name = "QueueUartCan"
 };
 
+osMessageQueueId_t QueueCanUartHandle;
+const osMessageQueueAttr_t QueueCanUart_attributes = {
+    .name = "QueueCanUart"
+};
+
 osThreadId_t CanTaskHandle;
 const osThreadAttr_t CanTask_attributes = {
 		.name = "CanTask",
-		.stack_size = 128*8,
+		.stack_size = 128*16,
 		.priority = (osPriority_t) osPriorityHigh2,
 };
+
+
 
 /* USER CODE END FunctionPrototypes */
 
@@ -109,6 +116,7 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
 	QueueUartCanHandle = osMessageQueueNew(10, RxBuf_SIZE, &QueueUartCan_attributes);
+	QueueCanUartHandle = osMessageQueueNew(10, RxBuf_SIZE, &QueueUartCan_attributes);
   /* USER CODE END RTOS_QUEUES */
 
   /* Create the thread(s) */

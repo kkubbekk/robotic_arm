@@ -1,65 +1,83 @@
-<?xml version ="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro"
-       name="robotic_arm">
-
-
-    <!-- PODSTAWA - BASE LINK -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="robotic_arm">
+<!--
+ Model testowy do RViz i wlasnego hardware interface. 
+-->
+<material name="grey">
+<color rgba="0.5 0.5 0.5 1.0"/>
+</material>
+<material name="blue">
+<color rgba="0.1 0.3 0.9 1.0"/>
+</material>
+<material name="orange">
+<color rgba="1.0 0.45 0.05 1.0"/>
+</material>
 <link name="base_link">
-    <visual>
-        <origin xyz="0 0 0.05" rpy="0 0 0"/>
-        <geometry>
-            <box size="0.3 0.3 0.1"/>
-        </geometry>
-        <material name="grey">
-            <color rgba="0.5 0.5 0.5 1.0"/>
-        </material>
-    </visual>
-
-    <collision>
-        <origin xyz="0 0 0.05" rpy="0 0 0"/>
-        <geometry>
-            <box size="0.3 0.3 0.1"/>
-        </geometry>
-    </collision>
+<visual>
+<origin xyz="0 0 0.05" rpy="0 0 0"/>
+<geometry>
+<box size="0.3 0.3 0.1"/>
+</geometry>
+<material name="grey"/>
+</visual>
+<collision>
+<origin xyz="0 0 0.05" rpy="0 0 0"/>
+<geometry>
+<box size="0.3 0.3 0.1"/>
+</geometry>
+</collision>
 </link>
-
-
 <link name="rotating_base">
-    <visual>
-       
-        <origin xyz="0 0 0.1" rpy="0 0 0"/>
-        <geometry>
-            <cylinder radius="0.1" length="0.2"/>
-        </geometry>
-        <material name="blue">
-            <color rgba="0.1 0.3 0.9 1.0"/>
-        </material>
-    </visual>
-
-    <collision>
-        <origin xyz="0 0 0.1" rpy="0 0 0"/>
-        <geometry>
-            <cylinder radius="0.1" length="0.2"/>
-        </geometry>
-    </collision>
+<visual>
+<origin xyz="0 0 0.1" rpy="0 0 0"/>
+<geometry>
+<cylinder radius="0.1" length="0.2"/>
+</geometry>
+<material name="blue"/>
+</visual>
+<collision>
+<origin xyz="0 0 0.1" rpy="0 0 0"/>
+<geometry>
+<cylinder radius="0.1" length="0.2"/>
+</geometry>
+</collision>
 </link>
-
-     <!-- Połączenie podstawy z ramieniem -->
-
-  <joint name="shoulder_joint" type="revolute">
-        <parent link="base_link"/>
-        <child link="rotating_base"/>
-
-        <origin xyz="0 0 0.1" rpy="0 0 0"/>
-        <axis xyz="0 0 1"/>
-
-
-        <limit
-        lower="-3.14159"
-        upper="3.14159"
-        effort="10.0"
-        velocity="1.0"/>
-        
-    </joint>
-
+<!-- ID 0: obrot calego ramienia wokol osi Z. -->
+<joint name="shoulder_joint" type="revolute">
+<parent link="base_link"/>
+<child link="rotating_base"/>
+<origin xyz="0 0 0.1" rpy="0 0 0"/>
+<axis xyz="0 0 1"/>
+<limit lower="-3.14159" upper="3.14159" effort="10.0" velocity="2.0"/>
+</joint>
+<link name="arm_link">
+<visual>
+<origin xyz="0.2 0 0" rpy="0 0 0"/>
+<geometry>
+<box size="0.4 0.06 0.06"/>
+</geometry>
+<material name="orange"/>
+</visual>
+<collision>
+<origin xyz="0.2 0 0" rpy="0 0 0"/>
+<geometry>
+<box size="0.4 0.06 0.06"/>
+</geometry>
+</collision>
+</link>
+<!--
+ ID 1: pochylenie pomaranczowego ramienia wokol osi Y.
+       Szerokie limity sa testowe: obejmuja wartosc 5.34 rad ze STM. 
+-->
+<joint name="elbow_joint" type="revolute">
+<parent link="rotating_base"/>
+<child link="arm_link"/>
+<origin xyz="0 0 0.2" rpy="0 0 0"/>
+<axis xyz="0 1 0"/>
+<limit lower="-6.28319" upper="6.28319" effort="10.0" velocity="2.0"/>
+</joint>
+<!--
+ Zachowaj swoj dzialajacy plugin; dopisz w tym pliku elbow_joint.
+       Kolejnosc jointow w ros2_control: shoulder_joint, elbow_joint. 
+-->
+<xacro:include filename="$(find robot_description)/urdf/robot_description.ros2_control.xacro"/>
 </robot>

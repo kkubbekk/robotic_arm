@@ -1,0 +1,5 @@
+../Core/Src/can_lib.c:11:6:Can_init	64	static
+../Core/Src/can_lib.c:30:6:Can_Set_Strict_Filter	56	static
+../Core/Src/can_lib.c:60:6:HAL_CAN_RxFifo0MsgPendingCallback	64	static
+../Core/Src/can_lib.c:96:6:Can_Read_Data	16	static
+../Core/Src/can_lib.c:110:6:Can_Send_Data	56	static

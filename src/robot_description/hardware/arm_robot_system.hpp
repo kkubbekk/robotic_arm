@@ -12,7 +12,7 @@
 #include "rclcpp_lifecycle/state.hpp"
 #include "uart_comm.hpp"
 
-class ArmRobotSystemHardware : public hardware_interface::SystemInterface , public uartcomm
+class ArmRobotSystemHardware : public hardware_interface::SystemInterface
 {
     public:
         hardware_interface::CallbackReturn on_init(
@@ -27,16 +27,9 @@ class ArmRobotSystemHardware : public hardware_interface::SystemInterface , publ
         hardware_interface::CallbackReturn on_deactivate(
         const rclcpp_lifecycle::State & previous_state) override;
 
-        hardware_interface::return_type read(
-        const rclcpp::Time & time, const rclcpp::Duration & period) override;
 
-        hardware_interface::return_type write(
-        const rclcpp::Time & time, const rclcpp::Duration & period) override;
-
-        std::vector<hardware_interface::CommandInterface> ArmRobotSystemHardware::export_command_interfaces() override;
-
-        std::vector<hardware_interface::StateInterface> ArmRobotSystemHardware::export_state_interfaces() override;
-
+        std::vector<hardware_interface::CommandInterface> export_command_interfaces() override;
+        std::vector<hardware_interface::StateInterface> export_state_interfaces() override;
 
         hardware_interface::return_type read(
         const rclcpp::Time & time, const rclcpp::Duration & period) override;
@@ -50,4 +43,6 @@ class ArmRobotSystemHardware : public hardware_interface::SystemInterface , publ
 
         std::vector<double> hw_velocities_;
         std::vector<double> hw_positions_;
+
+        uartcomm uart_;
 };

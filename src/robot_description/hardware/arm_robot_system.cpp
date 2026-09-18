@@ -19,7 +19,7 @@ hardware_interface::CallbackReturn ArmRobotSystemHardware::on_init(
     if(joint.command_interfaces.size() != 2)
     {
          RCLCPP_FATAL(
-        rclcpp::get_logger, "Joint '%s' has %zu command interfaces found. 2 expected.",
+        rclcpp::get_logger("ArmRobotSystemHardware"), "Joint '%s' has %zu command interfaces found. 2 expected.",
         joint.name.c_str(), joint.command_interfaces.size());
       return hardware_interface::CallbackReturn::ERROR;
     }
@@ -27,7 +27,7 @@ hardware_interface::CallbackReturn ArmRobotSystemHardware::on_init(
      if (joint.command_interfaces[0].name != hardware_interface::HW_IF_POSITION)
     {
       RCLCPP_FATAL(
-        rclcpp::get_logger, "Joint '%s' have %s command interfaces found. '%s' expected.",
+        rclcpp::get_logger("ArmRobotSystemHardware"), "Joint '%s' have %s command interfaces found. '%s' expected.",
         joint.name.c_str(), joint.command_interfaces[0].name.c_str(),
         hardware_interface::HW_IF_POSITION);
       return hardware_interface::CallbackReturn::ERROR;
@@ -36,7 +36,7 @@ hardware_interface::CallbackReturn ArmRobotSystemHardware::on_init(
        if (joint.command_interfaces[1].name != hardware_interface::HW_IF_VELOCITY)
     {
       RCLCPP_FATAL(
-        rclcpp::get_logger(), "Joint '%s' have %s command interfaces found. '%s' expected.",
+        rclcpp::get_logger("ArmRobotSystemHardware"), "Joint '%s' have %s command interfaces found. '%s' expected.",
         joint.name.c_str(), joint.command_interfaces[1].name.c_str(),
         hardware_interface::HW_IF_VELOCITY);
       return hardware_interface::CallbackReturn::ERROR;
@@ -47,7 +47,7 @@ hardware_interface::CallbackReturn ArmRobotSystemHardware::on_init(
      if (joint.state_interfaces.size() != 2)
     {
       RCLCPP_FATAL(
-        rclcpp::get_logger(), "Joint '%s' has %zu state interface. 2 expected.", joint.name.c_str(),
+        rclcpp::get_logger("ArmRobotSystemHardware"), "Joint '%s' has %zu state interface. 2 expected.", joint.name.c_str(),
         joint.state_interfaces.size());
       return hardware_interface::CallbackReturn::ERROR;
     }
@@ -55,7 +55,7 @@ hardware_interface::CallbackReturn ArmRobotSystemHardware::on_init(
     if (joint.state_interfaces[0].name != hardware_interface::HW_IF_POSITION)
     {
       RCLCPP_FATAL(
-        rclcpp::get_logger(), "Joint '%s' have '%s' as first state interface. '%s' expected.",
+        rclcpp::get_logger("ArmRobotSystemHardware"), "Joint '%s' have '%s' as first state interface. '%s' expected.",
         joint.name.c_str(), joint.state_interfaces[0].name.c_str(),
         hardware_interface::HW_IF_POSITION);
       return hardware_interface::CallbackReturn::ERROR;
@@ -64,7 +64,7 @@ hardware_interface::CallbackReturn ArmRobotSystemHardware::on_init(
     if (joint.state_interfaces[1].name != hardware_interface::HW_IF_VELOCITY)
     {
       RCLCPP_FATAL(
-        rclcpp::get_logger(), "Joint '%s' have '%s' as second state interface. '%s' expected.",
+        rclcpp::get_logger("ArmRobotSystemHardware"), "Joint '%s' have '%s' as second state interface. '%s' expected.",
         joint.name.c_str(), joint.state_interfaces[1].name.c_str(),
         hardware_interface::HW_IF_VELOCITY);
       return hardware_interface::CallbackReturn::ERROR;
@@ -84,23 +84,46 @@ hardware_interface::CallbackReturn ArmRobotSystemHardware::on_init(
   hardware_interface::CallbackReturn ArmRobotSystemHardware::on_configure(
     const rclcpp_lifecycle::State &)
   {
-         RCLCPP_INFO(rclcpp::get_logger(), "Configurin Arm ...wait....");
-    
-        for( const auto & [name,desr] : joint_state_interfaces_)
-        {
-            set_state(name, 0.0);
-        }  
-        
-        for (const auto & [name, descr] : joint_command_interfaces_)
-        {
-            set_command(name, 0.0);
-        }
-        
-        RCLCPP_INFO(rclcpp::get_logger(), "Successfully configured!");
+    RCLCPP_INFO(rclcpp::get_logger("ArmRobotSystemHardware"), "Configuring Arm ...wait....");
 
-       
-  
-        return hardware_interface::CallbackReturn::SUCCESS;
+    std::string port= "/dev/ttyACM0";
+
+    if (!uart_.connect(port, 115200)) {
+        RCLCPP_FATAL(rclcpp::get_logger("ArmRobotSystemHardware"), "Failed to connect to UART port: %s", port.c_str());
+        return hardware_interface::CallbackReturn::ERROR;
+    }
+
+      for(uint i = 0; i < hw_positions_.size(); i++) {
+        hw_positions_[i] = 0.0;
+        hw_velocities_[i] = 0.0;
+        positions_[i] = 0.0;
+        velocities_[i] = 0.0;
+    }
+        
+    RCLCPP_INFO(rclcpp::get_logger("ArmRobotSystemHardware"), "Successfully configured!");
+    return hardware_interface::CallbackReturn::SUCCESS;
+    }
+
+
+    //test
+     hardware_interface::CallbackReturn ArmRobotSystemHardware::on_activate(
+    const rclcpp_lifecycle::State & /*previous_state*/)
+    {
+    RCLCPP_INFO(
+        rclcpp::get_logger("ArmRobotSystemHardware"),
+        "Aktywacja interfejsu sprzetowego");
+
+    return hardware_interface::CallbackReturn::SUCCESS;
+    }
+
+    hardware_interface::CallbackReturn ArmRobotSystemHardware::on_deactivate(
+    const rclcpp_lifecycle::State & /*previous_state*/)
+    {
+    RCLCPP_INFO(
+        rclcpp::get_logger("ArmRobotSystemHardware"),
+        "Dezaktywacja interfejsu sprzetowego");
+
+    return hardware_interface::CallbackReturn::SUCCESS;
     }
 
 std::vector<hardware_interface::StateInterface> ArmRobotSystemHardware::export_state_interfaces()
@@ -134,12 +157,32 @@ std::vector<hardware_interface::CommandInterface> ArmRobotSystemHardware::export
     return command_interfaces;
 }
 
-hardware_interface::return_type read(const rclcpp::Time & time, const rclcpp::Duration & period)
+hardware_interface::return_type ArmRobotSystemHardware::read(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
+   if (uart_.receivePackage(hw_positions_, hw_velocities_))
+    {
+        RCLCPP_INFO(
+            rclcpp::get_logger("ArmRobotSystemHardware"),
+            "UART RX id 1: pos=%.3f vel=%.3f id2: pos=%.3f vel=%.3f",
+            hw_positions_[0],
+            hw_velocities_[0],
+          hw_positions_[1],
+            hw_velocities_[1]);
+    }
 
+    return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type write(const rclcpp::Time & time, const rclcpp::Duration & period)
-{
 
-} 
+hardware_interface::return_type ArmRobotSystemHardware::write(const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
+{
+     const bool sent =
+        uart_.parse_send_packagage(velocities_, positions_);
+
+    return sent
+        ? hardware_interface::return_type::OK
+        : hardware_interface::return_type::ERROR;
+}
+
+#include "pluginlib/class_list_macros.hpp"
+PLUGINLIB_EXPORT_CLASS(ArmRobotSystemHardware, hardware_interface::SystemInterface)

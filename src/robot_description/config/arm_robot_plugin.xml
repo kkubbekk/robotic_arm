@@ -1,0 +1,7 @@
+<library path="arm_robot_hardware_lib">
+  <class name="robot_description/ArmRobotSystemHardware" 
+         type="ArmRobotSystemHardware" 
+         base_class_type="hardware_interface::SystemInterface">
+    <description>UART Hardware Interface for STM32</description>
+  </class>
+</library>
