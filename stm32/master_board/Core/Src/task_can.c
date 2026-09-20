@@ -30,7 +30,14 @@ void task_can(void *arg)
 	UartFrame buff;
 	UartFrame can_uart;
 	Can_Msg_t can_data;
+
+	extern uint8_t control_data[2];
+
 	uart_single_joint_t to_ros;
+
+	memcpy(&to_ros.ctrl[0],&control_data[0],sizeof(control_data));
+	//ctrl bita
+
 //	trzeba jakos dodac cantoolsy i sie wybierze id
 //	#include "arm.h"
 
@@ -51,6 +58,17 @@ void task_can(void *arg)
 	    if (Can_Read_Data(&can_data))
 	    {
 	        //pakowanie do uartsinglejoint i przesyl kolejka do uart
+	    	memcpy(&to_ros.data[0],&can_data.data[0],sizeof(float));
+	    	memcpy(&to_ros.data[4],&can_data.data[4],sizeof(float));
+
+	    	//id
+	    	memcpy(&to_ros.joint_id,&can_data.id,sizeof(to_ros.joint_id));
+
+	    	//wrzucamy do kolejki na uart
+	    	if(osMessageQueuePut(QueueCanUartHandle, &to_ros, 0, 0) == osOK)
+	    	{
+	    		//jakies gowno debugging hihiihaha
+	    	}
 	    }
 
 	    if (osMessageQueueGet(QueueUartCanHandle, &buff, NULL, 0) == osOK)
@@ -74,8 +92,7 @@ void task_can(void *arg)
 	        {
 	            Can_Msg_t *frame = &can_frames_joints[i];
 
-	            if (Can_Send_Data(
-	                    &hcan1, frame, frame->id, frame->data, frame->dlc))
+	            if (Can_Send_Data( &hcan1, frame, frame->id, frame->data, frame->dlc))
 	            {
 	                ++i;
 	                continue;

@@ -14,13 +14,20 @@
 extern DMA_HandleTypeDef hdma_usart2_rx;
 extern osMessageQueueId_t QueueUartCanHandle;
 extern osMessageQueueId_t QueueCanUartHandle;
+extern osSemaphoreId_t	uartsem;
+
+
 volatile HAL_StatusTypeDef dupa = HAL_ERROR;
 volatile uint32_t tx_attempts = 0;
 volatile uint32_t tx_ok_count = 0;
 
 UartFrame frame_uart_can;
 
-UartFrame frame_can_uart;
+
+
+uart_single_joint_t buff;
+
+
 
 uint8_t control_data[2] = {0x1c , 0xff};
 
@@ -54,6 +61,10 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 	}
 }
 
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+{
+	osSemaphoreRelease(uartsem);
+}
 
 
 
@@ -66,49 +77,22 @@ void task_uart(void *arg)
 	__HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);
 
 
-	float test_vel = 1.023f;
-	float test_pos = 2.34f;
-
-	uart_single_joint_t test;
-
-	test.ctrl[0] = 0x1C;
-	test.ctrl[1] = 0xFF;
-	test.joint_id=0;
-
-
-	float test_vel1 = -1.023f;
-		float test_pos1 = 5.34f;
-
-		uart_single_joint_t test1;
-
-		test1.ctrl[0] = 0x1C;
-		test1.ctrl[1] = 0xFF;
-		test1.joint_id=1;
-
-		memcpy(&test1.data[0], &test_pos1, sizeof(test_pos1));
-		memcpy(&test1.data[4], &test_vel1, sizeof(test_vel1));
-
-
-	memcpy(&test.data[0], &test_pos, sizeof(test_pos));
-	memcpy(&test.data[4], &test_vel, sizeof(test_vel));
 
 	for(;;)
 	{
+
 		//jesli mamy cos z kolejki cana rozpakowujemy ramke i ja przesylamy tutaj trzeba myslec juz na cantoolsami
-//		if(osMessageQueueGet(mq_id, msg_ptr, msg_prio, timeout) == HAL_OK)
-//		{
-//
-//
-//		}
+		if(osMessageQueueGet(QueueCanUartHandle,&buff, NULL,100) == osOK)
+		{
 
-		tx_attempts++;
-
-
-		dupa = HAL_UART_Transmit_DMA(&huart2, (uint8_t*)&test, sizeof(test));
-//
-		osDelay(20);
-		HAL_UART_Transmit_DMA(&huart2, (uint8_t*)&test1, sizeof(test1));
-		if(dupa == HAL_OK) tx_ok_count++;
+			if(osSemaphoreAcquire(uartsem,10)== osOK)
+			{
+				HAL_UART_Transmit_DMA(&huart2, (uint8_t *)&buff, sizeof(uart_single_joint_t));
+			}
+		} else
+		{
+			//cosik jest kurwa nie tak mozna odsylac do rosa jakis stan fatal czy cosik
+		}
 
 
 
@@ -116,7 +100,12 @@ void task_uart(void *arg)
 
 
 
-		osDelay(100);
+
+
+
+
+
+		osDelay(2);
 	}
 }
 

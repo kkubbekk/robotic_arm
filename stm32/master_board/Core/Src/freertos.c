@@ -83,6 +83,10 @@ const osThreadAttr_t CanTask_attributes = {
 		.priority = (osPriority_t) osPriorityHigh2,
 };
 
+osSemaphoreId_t uartsem;
+const osSemaphoreAttr_t uart_sem_attr = {
+        .name = "spiDmaSem"
+    };
 
 
 /* USER CODE END FunctionPrototypes */
@@ -107,6 +111,8 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
+	uartsem  = osSemaphoreNew(1, 1, &uart_sem_attr);
+
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
