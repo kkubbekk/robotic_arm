@@ -1,12 +1,15 @@
 import os
 import cantools
 from cantools.database import Database, Message, Signal
+import shutil
 
 
 db = Database()
 
 NUM_JOINTS = 6
 BASE_FRAME_ID = 200
+
+# jonints
 
 for i in range(NUM_JOINTS):
    
@@ -35,7 +38,28 @@ for i in range(NUM_JOINTS):
         signals=[vel_signal, pos_signal]
     )
 
+    
+
     db.messages.append(msg)
+
+
+# start command"
+
+start_sig = Signal(
+    name = "start_sig",
+    start = 0,
+    length = 8,
+    byte_order="little_endian"
+)
+
+start_cmnd = Message(
+    frame_id = 1,
+    name = "start_command",
+    length = 1,
+    signals=[start_sig]
+)
+
+db.messages.append(start_cmnd)
 
 
 cantools.database.dump_file(db, 'arm.dbc')
@@ -43,3 +67,7 @@ print("Plik arm.dbc wygenerowany!")
 
 os.system("python3 -m cantools generate_c_source arm.dbc")
 print("Pliki arm.c oraz arm.h zostały wygenerowane!")
+
+shutil.copy("arm.c","../stm32/master_board/Middlewares/can")
+shutil.copy("arm.h","../stm32/master_board/Middlewares/can")
+shutil.copy("arm.dbc","../stm32/master_board/Middlewares/can")

@@ -42,7 +42,8 @@ Core/Src/task_can.o: ../Core/Src/task_can.c \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim_ex.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h \
  ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h \
- ../Drivers/BSP/STM32L4xx_Nucleo/stm32l4xx_nucleo.h
+ ../Drivers/BSP/STM32L4xx_Nucleo/stm32l4xx_nucleo.h \
+ /home/jakub/robotic_arm/stm32/master_board/Middlewares/can/arm.h
 ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h:
 ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h:
 ../Core/Inc/FreeRTOSConfig.h:
@@ -90,3 +91,4 @@ Core/Src/task_can.o: ../Core/Src/task_can.c \
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart_ex.h:
 ../Drivers/BSP/STM32L4xx_Nucleo/stm32l4xx_nucleo.h:
+/home/jakub/robotic_arm/stm32/master_board/Middlewares/can/arm.h:

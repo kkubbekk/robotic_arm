@@ -15,6 +15,7 @@
 #include "shared_data.h"
 #include "can_lib.h"
 #include <string.h>
+#include "arm.h"
 
 extern osMessageQueueId_t QueueUartCanHandle;
 extern osMessageQueueId_t QueueCanUartHandle;
@@ -28,7 +29,7 @@ void task_can(void *arg)
 	Can_init(&hcan1,0,0);
 
 	UartFrame buff;
-	UartFrame can_uart;
+
 	Can_Msg_t can_data;
 
 	extern uint8_t control_data[2];
@@ -104,6 +105,12 @@ void task_can(void *arg)
 	                break;
 	            }
 
+	            if(i == JOINT_COUNT -1 )
+	         	        {
+	         	        	Can_Send_Data(&hcan1, msg_send, id, payload, dlc)
+
+	         	        }
+
 	            osDelay(1);
 	        }
 
@@ -111,6 +118,7 @@ void task_can(void *arg)
 	        {
 	            can_tx_timeouts++;
 	        }
+
 	    }
 	    //dodac po wszystkich rozeslaniach komende start
 	    //kurwa chujowo napisale ten kod xD

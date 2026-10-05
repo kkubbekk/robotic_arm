@@ -65,8 +65,8 @@ all: main-build
 main-build: master_board.elf secondary-outputs
 
 # Tool invocations
-master_board.elf master_board.map: $(OBJS) $(USER_OBJS) /home/kubekpc/robotic_arm_ws/stm32/master_board/STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "master_board.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/kubekpc/robotic_arm_ws/stm32/master_board/STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="master_board.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+master_board.elf master_board.map: $(OBJS) $(USER_OBJS) /home/jakub/robotic_arm/stm32/master_board/STM32L476RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "master_board.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/jakub/robotic_arm/stm32/master_board/STM32L476RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="master_board.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

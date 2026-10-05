@@ -60,6 +60,9 @@ BO_ 205 joint5: 8 Vector__XXX
  SG_ joint5_pos : 32|32@1+ (1,0) [0|0] "" Vector__XXX
  SG_ joint5_vel : 0|32@1+ (1,0) [0|0] "" Vector__XXX
 
+BO_ 1 start_command: 1 Vector__XXX
+ SG_ start_sig : 0|8@1+ (1,0) [0|0] "" Vector__XXX
+
 
 
 

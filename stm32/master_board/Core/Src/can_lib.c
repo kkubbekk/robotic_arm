@@ -31,23 +31,20 @@ void Can_Set_Strict_Filter(CAN_HandleTypeDef* hcan, uint32_t my_motor_id)
 {
     CAN_FilterTypeDef filter = {0};
 
-    // 1. Wzorzec: Podajemy dokładne ID naszego węzła (przesunięte o 5 bitów w lewo dla Standard ID)
     filter.FilterIdHigh = my_motor_id << 5;
-    filter.FilterIdLow = 0; // Dolna połowa rejestru (nas nie interesuje dla 11-bitowych ID)
+    filter.FilterIdLow = 0;
 
-    // 2. Maska: 0x7FF wymusza sprawdzenie każdego z 11 bitów.
-    // Jeśli choć jeden bit w przychodzącej wiadomości będzie inny, ramka zostanie odrzucona.
     filter.FilterMaskIdHigh = 0x7FF << 5;
     filter.FilterMaskIdLow = 0;
 
-    // 3. Konfiguracja sprzętowa
-    filter.FilterBank = filter_cnt++;                      // Używamy pierwszego banku filtrów
-    filter.FilterMode = CAN_FILTERMODE_IDMASK;  // Tryb z maską
-    filter.FilterScale = CAN_FILTERSCALE_32BIT; // Używamy pełnego, 32-bitowego rejestru
-    filter.FilterFIFOAssignment = CAN_RX_FIFO0; // Zgodnie z naszą funkcją przerwania zrzucamy do FIFO0
-    filter.FilterActivation = ENABLE;           // Włącz filtr
 
-    // 4. Załadowanie konfiguracji do kontrolera CAN
+    filter.FilterBank = filter_cnt++;
+    filter.FilterMode = CAN_FILTERMODE_IDMASK;
+    filter.FilterScale = CAN_FILTERSCALE_32BIT;
+    filter.FilterFIFOAssignment = CAN_RX_FIFO0;
+    filter.FilterActivation = ENABLE;
+
+
     HAL_CAN_ConfigFilter(hcan, &filter);
 }
 
@@ -116,6 +113,7 @@ bool Can_Send_Data(CAN_HandleTypeDef* hcan,Can_Msg_t *msg_send,uint32_t id,uint8
 	TxHeader.RTR = CAN_RTR_DATA;
 	TxHeader.StdId = id;
 	TxHeader.TransmitGlobalTime = DISABLE;
+
 
 	uint32_t TxMailbox;
 
