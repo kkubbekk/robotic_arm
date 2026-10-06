@@ -51,14 +51,16 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 		}
 
 
-		if (HAL_UARTEx_ReceiveToIdle_DMA(&huart2,frame_uart_can.data,sizeof(frame_uart_can.data)) != HAL_OK)
+
+
+
+
+	}
+	if (HAL_UARTEx_ReceiveToIdle_DMA(&huart2,frame_uart_can.data,sizeof(frame_uart_can.data)) != HAL_OK)
 		{
 
 	    }
-
-	    __HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);
-
-	}
+    __HAL_DMA_DISABLE_IT(&hdma_usart2_rx, DMA_IT_HT);
 }
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)

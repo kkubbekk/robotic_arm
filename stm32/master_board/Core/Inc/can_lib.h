@@ -45,7 +45,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan);
 
 bool Can_Send_Data(
     CAN_HandleTypeDef *hcan,
-    Can_Msg_t *msg_send,
+
     uint32_t id,
     uint8_t *payload,
     uint8_t dlc);

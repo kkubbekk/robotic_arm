@@ -104,7 +104,7 @@ bool Can_Read_Data(Can_Msg_t *msg_out)
 	return true;
 }
 
-bool Can_Send_Data(CAN_HandleTypeDef* hcan,Can_Msg_t *msg_send,uint32_t id,uint8_t *payload,uint8_t dlc)
+bool Can_Send_Data(CAN_HandleTypeDef* hcan,uint32_t id,uint8_t *payload,uint8_t dlc)
 {
 	CAN_TxHeaderTypeDef TxHeader = {0};
 

@@ -3,3 +3,4 @@
 /install
 .vscode/browse.vc.db*
 .vscode/browse.vc.db*
+ stm32/master_board/Debug
